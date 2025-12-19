@@ -1,4 +1,5 @@
 version: 0.2
+# Pipeline CI/CD para deploy no ECS
 
 phases:
   pre_build:
