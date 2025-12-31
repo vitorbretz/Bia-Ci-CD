@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Instalando Node.js 21 é npm..."
+      - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash -
+      - sudo yum install -y nodejs
+  build:
+    commands:
+      - npm install --loglevel=error
+      - cd client && VITE_API_URL=http://44.215.126.93/ npm run build
+      - Rodando testes unitários..
+      - npm test
