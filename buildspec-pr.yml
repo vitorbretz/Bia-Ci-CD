@@ -3,12 +3,19 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Instalando Node.js 21 é npm..."
+      - echo "Instalando Node.js 21 e npm..."
       - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash -
       - sudo yum install -y nodejs
+      - node -v
+      - npm -v
+
   build:
     commands:
+      - echo "Entrando na pasta client"
+      - cd client
+      - echo "Instalando dependências"
       - npm install --loglevel=error
-      - cd client && VITE_API_URL=http://44.215.126.93/ npm run build
-      - Rodando testes unitários..
+      - echo "Buildando aplicação Vite"
+      - VITE_API_URL=http://44.215.126.93/ npm run build
+      - echo "Rodando testes unitários"
       - npm test
