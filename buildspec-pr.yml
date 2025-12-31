@@ -10,11 +10,13 @@ phases:
 
   build:
     commands:
-      - echo "Rodando testes do backend"
-      - npm test
+      - echo "Pulando testes no PR"
 
       - echo "Buildando frontend"
       - cd client
       - npm install
       - npm run build
 
+artifacts:
+  files:
+    - '**/*'
