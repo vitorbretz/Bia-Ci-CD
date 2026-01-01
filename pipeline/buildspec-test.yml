@@ -1,0 +1,29 @@
+version: 0.2
+# Pipeline de testes antes do build
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Instalando dependências..."
+      - npm install
+      
+  pre_build:
+    commands:
+      - echo "Preparando ambiente de testes..."
+      - npm --version
+      - node --version
+      
+  build:
+    commands:
+      - echo "Executando testes unitários..."
+      - npm test
+      
+  post_build:
+    commands:
+      - echo "Testes concluídos com sucesso!"
+
+artifacts:
+  files:
+    - '**/*'

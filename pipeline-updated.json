@@ -1,0 +1,152 @@
+{
+  "pipeline": {
+    "name": "bia-hom",
+    "roleArn": "arn:aws:iam::397234361193:role/service-role/AWSCodePipelineServiceRole-us-east-1-bia-hom",
+    "artifactStore": {
+      "type": "S3",
+      "location": "bia-artifacts"
+    },
+    "stages": [
+      {
+        "name": "Source",
+        "actions": [
+          {
+            "name": "Source",
+            "actionTypeId": {
+              "category": "Source",
+              "owner": "AWS",
+              "provider": "CodeStarSourceConnection",
+              "version": "1"
+            },
+            "runOrder": 1,
+            "configuration": {
+              "BranchName": "pr-ci/cd",
+              "ConnectionArn": "arn:aws:codeconnections:us-east-1:397234361193:connection/740753dc-af02-4eab-9c13-d251e81f37d6",
+              "DetectChanges": "false",
+              "FullRepositoryId": "vitorbretz/Bia-Ci-CD",
+              "OutputArtifactFormat": "CODE_ZIP"
+            },
+            "outputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "inputArtifacts": [],
+            "region": "us-east-1"
+          }
+        ]
+      },
+      {
+        "name": "Test",
+        "actions": [
+          {
+            "name": "UnitTests",
+            "actionTypeId": {
+              "category": "Test",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "runOrder": 1,
+            "configuration": {
+              "ProjectName": "bia-test"
+            },
+            "outputArtifacts": [
+              {
+                "name": "TestArtifact"
+              }
+            ],
+            "inputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "region": "us-east-1"
+          }
+        ]
+      },
+      {
+        "name": "Build",
+        "actions": [
+          {
+            "name": "BuildDocker",
+            "actionTypeId": {
+              "category": "Build",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "runOrder": 1,
+            "configuration": {
+              "ProjectName": "bia-homo"
+            },
+            "outputArtifacts": [
+              {
+                "name": "BuildArtifact"
+              }
+            ],
+            "inputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "region": "us-east-1"
+          }
+        ]
+      },
+      {
+        "name": "Deploy-ECS",
+        "actions": [
+          {
+            "name": "DeployToECS",
+            "actionTypeId": {
+              "category": "Deploy",
+              "owner": "AWS",
+              "provider": "ECS",
+              "version": "1"
+            },
+            "runOrder": 1,
+            "configuration": {
+              "ClusterName": "cluster-bia",
+              "ServiceName": "task-def-bia-service-o9l2ri7k",
+              "FileName": "imagedefinitions.json"
+            },
+            "outputArtifacts": [],
+            "inputArtifacts": [
+              {
+                "name": "BuildArtifact"
+              }
+            ],
+            "region": "us-east-1"
+          }
+        ]
+      },
+      {
+        "name": "Deploy-Beanstalk",
+        "actions": [
+          {
+            "name": "DeployToBeanstalk",
+            "actionTypeId": {
+              "category": "Deploy",
+              "owner": "AWS",
+              "provider": "ElasticBeanstalk",
+              "version": "1"
+            },
+            "runOrder": 1,
+            "configuration": {
+              "ApplicationName": "bia-app",
+              "EnvironmentName": "bia-env"
+            },
+            "outputArtifacts": [],
+            "inputArtifacts": [
+              {
+                "name": "BuildArtifact"
+              }
+            ],
+            "region": "us-east-1"
+          }
+        ]
+      }
+    ]
+  }
+}
