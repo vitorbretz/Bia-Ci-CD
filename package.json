@@ -4,7 +4,8 @@
   "description": "### Período do evento: 27/09 a 28/09/2025 (Online e ao vivo às 20h)",
   "main": "server.js",
   "scripts": {
-    "test": "jest tests/unit",
+    "test": "jest tests/unit --coverage --watchAll=false",
+    "test:watch": "jest tests/unit --watch",
     "start": "node server",
     "start_db": "node config/database.js"
   },
@@ -56,6 +57,7 @@
   },
   "devDependencies": {
     "jest": "^27.5.1",
+    "jest-junit": "^16.0.0",
     "sequelize-cli": "^6.2.0"
   }
 }

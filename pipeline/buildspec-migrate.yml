@@ -1,19 +1,77 @@
 version: 0.2
-# Exemplo de buildspec para migração de banco de dados
+# Pipeline dedicada para migrações de banco de dados
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 20
     commands:
-      - echo "Instalando dependências necessárias para migração"
-      - curl -fsSL https://deb.nodesource.com/setup_21.x | bash - sudo -
-      - sudo yum install -y nodejs
-      - npm install -g sequelize-cli
+      - echo "=== CONFIGURANDO AMBIENTE DE MIGRAÇÃO ==="
+      - echo "Usando Node.js 20"
+      - node --version
+      - npm --version
+
+  pre_build:
+    commands:
+      - echo "=== INSTALANDO DEPENDÊNCIAS ==="
+      - echo "Instalando dependências da aplicação"
+      - npm install
+      - echo "=== VALIDANDO CONECTIVIDADE COM BANCO ==="
+      - echo "Verificando variáveis de ambiente do banco..."
+      - echo "DB_HOST: $DB_HOST"
+      - echo "DB_PORT: $DB_PORT"
+      - echo "DB_NAME: $DB_NAME"
+      - echo "DB_USER: [HIDDEN]"
+      - echo "Testando conectividade com o banco..."
+      - |
+        timeout 30 node -e "
+        const { Client } = require('pg');
+        const client = new Client({
+          host: process.env.DB_HOST,
+          port: process.env.DB_PORT,
+          database: 'postgres',
+          user: process.env.DB_USER,
+          password: process.env.DB_PWD,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        });
+        client.connect()
+          .then(() => {
+            console.log('✅ Conectividade com banco validada');
+            return client.end();
+          })
+          .catch(err => {
+            console.error('❌ Erro de conectividade:', err.message);
+            process.exit(1);
+          });
+        " || (echo "❌ Falha na conectividade com banco" && exit 1)
 
   build:
     commands:
-      - echo "realizando npm install"
-      - npm install
-      - echo "Executando criação e migração de banco de dados"
-      - npx sequelize-cli db:create || echo "Database already exists"
-      - npx sequelize-cli db:migrate || echo "Migration failed"
-      -
+      - echo "=== EXECUTANDO MIGRAÇÕES ==="
+      - echo "Criando banco de dados se não existir..."
+      - |
+        timeout 60 npx sequelize-cli db:create || {
+          echo "⚠️  Banco pode já existir ou erro na criação"
+        }
+      - echo "Executando migrações..."
+      - |
+        timeout 120 npx sequelize-cli db:migrate || {
+          echo "❌ Erro nas migrações"
+          exit 1
+        }
+      - echo "✅ Migrações executadas com sucesso!"
+
+  post_build:
+    commands:
+      - echo "=== VALIDANDO MIGRAÇÕES ==="
+      - echo "Verificando status das migrações..."
+      - |
+        timeout 30 npx sequelize-cli db:migrate:status || {
+          echo "⚠️  Não foi possível verificar status das migrações"
+        }
+      - echo "=== MIGRAÇÃO CONCLUÍDA ==="
+
+artifacts:
+  files:
+    - migration-logs.txt
+  name: MigrationArtifacts

@@ -1,21 +1,57 @@
 version: 0.2
-# Pipeline de testes antes do build
+# Pipeline dedicada para execução de testes
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 20
     commands:
-      - echo "Instalando dependências"
-      - curl -fsSL https://deb.nodesource.com/setup_21.x | bash - sudo -
-      - sudo yum install -y nodejs
+      - echo "=== CONFIGURANDO AMBIENTE DE TESTES ==="
+      - echo "Usando Node.js 20"
+      - node --version
+      - npm --version
+
+  pre_build:
+    commands:
+      - echo "=== INSTALANDO DEPENDÊNCIAS ==="
+      - echo "Instalando dependências do backend (incluindo dev dependencies)"
+      - npm install
+      - echo "Instalando dependências do frontend"
+      - cd client
+      - npm install --legacy-peer-deps
+      - cd ..
 
   build:
     commands:
-      - echo instalando as dependências da aplicação
-      - npm install --loglevel error
+      - echo "=== EXECUTANDO TESTES BACKEND ==="
+      - npm test -- --coverage --watchAll=false --testResultsProcessor=jest-junit
+      - echo "=== BUILDANDO FRONTEND ==="
       - cd client
-      - npm install --legacy-peer-deps --loglevel error
-      - VITE_API_URL=http://localhost:3001/ npm run build --force
+      - VITE_API_URL=http://localhost:3001/ npm run build
       - cd ..
-      - echo "Iniciando testes"
-      - npm test
+      - echo "=== TESTES CONCLUÍDOS COM SUCESSO ==="
+
+  post_build:
+    commands:
+      - echo "=== GERANDO RELATÓRIOS ==="
+      - echo "Testes executados com sucesso"
+      - ls -la coverage/ || echo "Coverage não gerado"
+      - ls -la client/dist/ || echo "Build do frontend não encontrado"
+
+reports:
+  jest_reports:
+    files:
+      - junit.xml
+    base-directory: .
+  coverage_reports:
+    files:
+      - '**/*'
+    base-directory: coverage
+
+artifacts:
+  files:
+    - coverage/**/*
+    - client/dist/**/*
+    - junit.xml
+  name: TestArtifacts
     
