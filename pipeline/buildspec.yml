@@ -22,6 +22,9 @@ phases:
       - echo "Enviando a imagem Docker para o ECR..."
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Executando migrações do banco de dados..."
+      - docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT $REPOSITORY_URI:latest npx sequelize-cli db:create --env production || echo "Database already exists"
+      - docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT $REPOSITORY_URI:latest npx sequelize-cli db:migrate --env production
       - echo "Gerando artefato da imagem para ECS"
       - printf '[{"name":"bia","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - codebuild-breakpoint
