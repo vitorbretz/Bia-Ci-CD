@@ -15,7 +15,7 @@ phases:
     commands:
       - echo "=== INSTALANDO DEPENDÊNCIAS ==="
       - echo "Instalando dependências do backend (incluindo dev dependencies)"
-      - npm install
+      - npm ci
       - echo "Instalando dependências do frontend"
       - cd client
       - npm install --legacy-peer-deps
@@ -24,7 +24,7 @@ phases:
   build:
     commands:
       - echo "=== EXECUTANDO TESTES BACKEND ==="
-      - npm test -- --coverage --watchAll=false --testResultsProcessor=jest-junit
+      - npx jest tests/unit --coverage --watchAll=false
       - echo "=== BUILDANDO FRONTEND ==="
       - cd client
       - VITE_API_URL=http://localhost:3001/ npm run build
