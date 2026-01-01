@@ -18,6 +18,10 @@ phases:
       - npm install
       - echo "Reinstalando Jest para garantir instalação correta"
       - npm install jest@27.5.1 --save-dev
+      - echo "Recriando symlinks do Jest"
+      - rm -f node_modules/.bin/jest
+      - ln -sf ../jest/bin/jest.js node_modules/.bin/jest
+      - chmod +x node_modules/.bin/jest
       - echo "Verificando instalação do Jest"
       - ls -la node_modules/.bin/ | grep jest || echo "Jest não encontrado"
       - ls -la node_modules/jest/bin/ || echo "Diretório jest/bin não encontrado"
@@ -29,7 +33,7 @@ phases:
   build:
     commands:
       - echo "=== EXECUTANDO TESTES BACKEND ==="
-      - node node_modules/jest/bin/jest.js tests/unit --coverage --watchAll=false
+      - npm test
       - echo "=== BUILDANDO FRONTEND ==="
       - cd client
       - VITE_API_URL=http://localhost:3001/ npm run build
