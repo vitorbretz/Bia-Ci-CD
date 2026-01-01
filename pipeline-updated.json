@@ -37,35 +37,6 @@
         ]
       },
       {
-        "name": "Test",
-        "actions": [
-          {
-            "name": "UnitTests",
-            "actionTypeId": {
-              "category": "Test",
-              "owner": "AWS",
-              "provider": "CodeBuild",
-              "version": "1"
-            },
-            "runOrder": 1,
-            "configuration": {
-              "ProjectName": "bia-test"
-            },
-            "outputArtifacts": [
-              {
-                "name": "TestArtifact"
-              }
-            ],
-            "inputArtifacts": [
-              {
-                "name": "SourceArtifact"
-              }
-            ],
-            "region": "us-east-1"
-          }
-        ]
-      },
-      {
         "name": "Build",
         "actions": [
           {
