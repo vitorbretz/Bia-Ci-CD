@@ -16,8 +16,11 @@ phases:
       - echo "=== INSTALANDO DEPENDÊNCIAS ==="
       - echo "Instalando dependências do backend (incluindo dev dependencies)"
       - npm install
+      - echo "Reinstalando Jest para garantir instalação correta"
+      - npm install jest@27.5.1 --save-dev
       - echo "Verificando instalação do Jest"
       - ls -la node_modules/.bin/ | grep jest || echo "Jest não encontrado"
+      - ls -la node_modules/jest/bin/ || echo "Diretório jest/bin não encontrado"
       - echo "Instalando dependências do frontend"
       - cd client
       - npm install --legacy-peer-deps
@@ -26,7 +29,7 @@ phases:
   build:
     commands:
       - echo "=== EXECUTANDO TESTES BACKEND ==="
-      - npm test
+      - ./node_modules/.bin/jest tests/unit --coverage --watchAll=false
       - echo "=== BUILDANDO FRONTEND ==="
       - cd client
       - VITE_API_URL=http://localhost:3001/ npm run build
