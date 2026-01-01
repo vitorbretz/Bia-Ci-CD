@@ -134,7 +134,7 @@
             },
             "runOrder": 1,
             "configuration": {
-              "ApplicationName": "bia-app",
+              "ApplicationName": "bia",
               "EnvironmentName": "bia-env"
             },
             "outputArtifacts": [],
