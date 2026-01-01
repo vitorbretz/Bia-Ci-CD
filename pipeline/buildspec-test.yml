@@ -15,7 +15,7 @@ phases:
     commands:
       - echo "=== INSTALANDO DEPENDÊNCIAS ==="
       - echo "Instalando dependências do backend (incluindo dev dependencies)"
-      - npm ci
+      - npm install
       - echo "Instalando dependências do frontend"
       - cd client
       - npm install --legacy-peer-deps
