@@ -1,42 +1,21 @@
 version: 0.2
-# Pipeline dedicada para execução de testes
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 20
     commands:
-      - echo "=== CONFIGURANDO AMBIENTE DE TESTES ==="
-      - echo "Usando Node.js 20"
+      - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash
+      - sudo yum install -y nodejs
       - node --version
       - npm --version
 
-  pre_build:
-    commands:
-      - echo "=== INSTALANDO DEPENDÊNCIAS ==="
-      - echo "Instalando dependências do backend"
-      - npm install
-      - echo "Instalando dependências do frontend"
-      - cd client
-      - npm install --legacy-peer-deps
-      - cd ..
-
   build:
     commands:
-      - echo "=== EXECUTANDO TESTES BACKEND ==="
-      - npm test
-      - echo "=== BUILDANDO FRONTEND ==="
+      - npm install
       - cd client
-      - VITE_API_URL=http://localhost:3001/ npm run build
+      - npm install --legacy-peer-deps --loglevel=error
+      - VITE_API_URL=http://localhost:3001/ npm run build --force
       - cd ..
-      - echo "=== TESTES CONCLUÍDOS COM SUCESSO ==="
-
-  post_build:
-    commands:
-      - echo "=== GERANDO RELATÓRIOS ==="
-      - echo "Testes executados com sucesso"
-      - ls -la coverage/ || echo "Coverage não gerado"
-      - ls -la client/dist/ || echo "Build do frontend não encontrado"
+      - npm test
 
 reports:
   jest_reports:
@@ -54,4 +33,3 @@ artifacts:
     - client/dist/**/*
     - junit.xml
   name: TestArtifacts
-    
