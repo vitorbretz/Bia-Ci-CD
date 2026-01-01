@@ -24,7 +24,7 @@ phases:
   build:
     commands:
       - echo "=== EXECUTANDO TESTES BACKEND ==="
-      - npx jest tests/unit --coverage --watchAll=false
+      - ./node_modules/.bin/jest tests/unit --coverage --watchAll=false
       - echo "=== BUILDANDO FRONTEND ==="
       - cd client
       - VITE_API_URL=http://localhost:3001/ npm run build
