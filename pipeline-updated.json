@@ -66,33 +66,6 @@
         ]
       },
       {
-        "name": "Deploy-ECS",
-        "actions": [
-          {
-            "name": "DeployToECS",
-            "actionTypeId": {
-              "category": "Deploy",
-              "owner": "AWS",
-              "provider": "ECS",
-              "version": "1"
-            },
-            "runOrder": 1,
-            "configuration": {
-              "ClusterName": "cluster-bia",
-              "ServiceName": "task-def-bia-service-o9l2ri7k",
-              "FileName": "imagedefinitions.json"
-            },
-            "outputArtifacts": [],
-            "inputArtifacts": [
-              {
-                "name": "BuildArtifact"
-              }
-            ],
-            "region": "us-east-1"
-          }
-        ]
-      },
-      {
         "name": "Deploy-Beanstalk",
         "actions": [
           {
