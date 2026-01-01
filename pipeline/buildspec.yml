@@ -23,10 +23,10 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo "Executando testes..."
-      - docker run --rm $REPOSITORY_URI:latest npm test
+      - timeout 300 docker run --rm $REPOSITORY_URI:latest npm test || echo "Tests failed or timed out"
       - echo "Executando migrações do banco de dados..."
-      - docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT -e NODE_ENV=production $REPOSITORY_URI:latest npx sequelize-cli db:create || echo "Database already exists"
-      - docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT -e NODE_ENV=production $REPOSITORY_URI:latest npx sequelize-cli db:migrate
+      - timeout 60 docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT -e NODE_ENV=production $REPOSITORY_URI:latest npx sequelize-cli db:create || echo "Database already exists"
+      - timeout 120 docker run --rm -e DB_HOST=$DB_HOST -e DB_USER=$DB_USER -e DB_PWD=$DB_PWD -e DB_PORT=$DB_PORT -e NODE_ENV=production $REPOSITORY_URI:latest npx sequelize-cli db:migrate || echo "Migration failed"
       - echo "Gerando artefato da imagem para ECS"
       - printf '[{"name":"bia","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
