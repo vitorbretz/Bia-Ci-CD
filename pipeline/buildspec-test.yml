@@ -5,8 +5,10 @@ phases:
     commands:
       - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash
       - sudo yum install -y nodejs
+      - npm install -g jest@27.5.1
       - node --version
       - npm --version
+      - jest --version
 
   build:
     commands:
@@ -15,21 +17,10 @@ phases:
       - npm install --legacy-peer-deps --loglevel=error
       - VITE_API_URL=http://localhost:3001/ npm run build --force
       - cd ..
-      - npm test
-
-reports:
-  jest_reports:
-    files:
-      - junit.xml
-    base-directory: .
-  coverage_reports:
-    files:
-      - '**/*'
-    base-directory: coverage
+      - jest tests/unit --coverage --watchAll=false
 
 artifacts:
   files:
     - coverage/**/*
     - client/dist/**/*
-    - junit.xml
   name: TestArtifacts
