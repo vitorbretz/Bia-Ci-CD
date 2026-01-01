@@ -16,8 +16,6 @@ phases:
       - echo "=== INSTALANDO DEPENDÊNCIAS ==="
       - echo "Instalando dependências do backend"
       - npm install
-      - echo "Verificando Jest"
-      - npx jest --version
       - echo "Instalando dependências do frontend"
       - cd client
       - npm install --legacy-peer-deps
