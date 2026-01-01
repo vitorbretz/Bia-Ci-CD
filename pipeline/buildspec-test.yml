@@ -3,28 +3,19 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      nodejs: 20
     commands:
-      - echo "Instalando dependências..."
-      - npm install
-      
-  pre_build:
-    commands:
-      - echo "Preparando ambiente de testes..."
-      - npm --version
-      - node --version
-      
+      - echo "Instalando dependências"
+      - curl -fsSL https://deb.nodesource.com/setup_21.x | bash - sudo -
+      - sudo yum install -y nodejs
+
   build:
     commands:
-      - echo "Executando testes unitários..."
+      - echo instalando as dependências da aplicação
+      - npm install --loglevel error
+      - cd client
+      - npm install --legacy-peer-deps --loglevel error
+      - VITE_API_URL=http://localhost:3001/ npm run build --force
+      - cd ..
+      - echo "Iniciando testes"
       - npm test
-      
-  post_build:
-    commands:
-      - echo "Testes concluídos com sucesso!"
-
-artifacts:
-  files:
-    - '**/*'
-
+    

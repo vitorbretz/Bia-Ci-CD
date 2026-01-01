@@ -44,6 +44,32 @@ phases:
               "HostPort": 80
             }
           ],
+          "Environment": [
+            {
+              "Name": "NODE_ENV",
+              "Value": "production"
+            },
+            {
+              "Name": "DB_HOST",
+              "Value": "$DB_HOST"
+            },
+            {
+              "Name": "DB_USER",
+              "Value": "$DB_USER"
+            },
+            {
+              "Name": "DB_PWD",
+              "Value": "$DB_PWD"
+            },
+            {
+              "Name": "DB_PORT",
+              "Value": "$DB_PORT"
+            },
+            {
+              "Name": "DB_NAME",
+              "Value": "$DB_NAME"
+            }
+          ],
           "Logging": "/var/log/nginx"
         }
         EOF

@@ -18,14 +18,19 @@ RUN cd client && npm install --legacy-peer-deps --loglevel=error
 COPY . .
 
 # Build do front-end com Vite
-RUN cd client && VITE_API_URL=http://bia-env.eba-pa7vtkc3.us-east-1.elasticbeanstalk.com npm run build
+RUN cd client && npm run build
 
 # Verificar se o build foi criado
 RUN ls -la client/build/ || (echo "Build failed - client/build directory not found" && exit 1)
+RUN test -f client/build/index.html || (echo "index.html not found in build directory" && exit 1)
 
 # Limpeza das dependências de desenvolvimento do client para reduzir tamanho
 RUN cd client && npm prune --production && rm -rf node_modules/.cache
 
 EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/health || exit 1
 
 CMD [ "npm", "start" ]

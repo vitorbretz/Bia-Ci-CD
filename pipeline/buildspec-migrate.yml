@@ -1,0 +1,19 @@
+version: 0.2
+# Exemplo de buildspec para migração de banco de dados
+
+phases:
+  install:
+    commands:
+      - echo "Instalando dependências necessárias para migração"
+      - curl -fsSL https://deb.nodesource.com/setup_21.x | bash - sudo -
+      - sudo yum install -y nodejs
+      - npm install -g sequelize-cli
+
+  build:
+    commands:
+      - echo "realizando npm install"
+      - npm install
+      - echo "Executando criação e migração de banco de dados"
+      - npx sequelize-cli db:create || echo "Database already exists"
+      - npx sequelize-cli db:migrate || echo "Migration failed"
+      -

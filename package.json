@@ -2,7 +2,7 @@
   "name": "bia",
   "version": "4.2.0",
   "description": "### Período do evento: 27/09 a 28/09/2025 (Online e ao vivo às 20h)",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest tests/unit",
     "start": "node server",
