@@ -5,7 +5,7 @@ phases:
   install:
     commands:
       - echo "Instalando dependências necessárias para migração"
-      - curl -fsSL https://deb.nodesource.com/setup_21.x | bash - sudo -
+      - curl -fsSL https://deb.nodesource.com/setup_21.x | sudo bash -
       - sudo yum install -y nodejs
       - npm install -g sequelize-cli
 
@@ -15,5 +15,4 @@ phases:
       - npm install
       - echo "Executando criação e migração de banco de dados"
       - npx sequelize-cli db:create || echo "Database already exists"
-      
-      -
+      - npx sequelize-cli db:migrate
