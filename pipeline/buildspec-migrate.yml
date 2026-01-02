@@ -3,10 +3,10 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      nodejs: 18
     commands:
       - echo "Instalando dependências necessárias para migração"
-      - curl -fsSL https://deb.nodesource.com/setup_21.x | sudo bash -
-      - sudo yum install -y nodejs
       - npm install -g sequelize-cli
 
   build:
