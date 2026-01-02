@@ -18,6 +18,7 @@ RUN cd client && npm install --legacy-peer-deps --loglevel=error
 COPY . .
 
 # Build do front-end com Vite
+ENV VITE_API_URL=http://3.83.9.228
 RUN cd client && npm run build
 
 # Verificar se o build foi criado
