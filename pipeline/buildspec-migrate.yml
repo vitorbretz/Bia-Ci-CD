@@ -1,5 +1,5 @@
 version: 0.2
-# Exemplo de buildspec para migração de banco de dados
+# Buildspec para setup completo do banco de dados
 
 phases:
   install:
@@ -11,7 +11,8 @@ phases:
 
   build:
     commands:
-      - echo "realizando npm install"
+      - echo "=== SETUP DO BANCO DE DADOS ==="
+      - echo "Realizando npm install"
       - npm install
       - echo "Executando criação de banco de dados"
       - npx sequelize-cli db:create || echo "Database already exists"
@@ -20,3 +21,4 @@ phases:
       - mkdir -p migrations
       - echo "Executando migrações (se existirem)"
       - npx sequelize-cli db:migrate || echo "Nenhuma migração para executar"
+      - echo "=== SETUP CONCLUÍDO ==="
