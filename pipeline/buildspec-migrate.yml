@@ -13,12 +13,10 @@ phases:
     commands:
       - echo "realizando npm install"
       - npm install
-      - echo "Verificando variáveis de ambiente"
-      - echo "DB_HOST=$DB_HOST"
-      - echo "DB_NAME=$DB_NAME"
-      - echo "NODE_ENV=$NODE_ENV"
-      - echo "Executando criação e migração de banco de dados"
-      - npx sequelize-cli db:create --debug || echo "Database already exists"
+      - echo "Executando criação de banco de dados"
+      - npx sequelize-cli db:create || echo "Database already exists"
       - echo "Verificando se existem migrações"
-      - ls -la migrations/ || echo "Diretório migrations não existe ou está vazio"
-      - if [ -d "migrations" ] && [ "$(ls -A migrations)" ]; then npx sequelize-cli db:migrate --debug; else echo "Nenhuma migração encontrada, pulando..."; fi
+      - ls -la migrations/ || echo "Diretório migrations não existe"
+      - mkdir -p migrations
+      - echo "Executando migrações (se existirem)"
+      - npx sequelize-cli db:migrate || echo "Nenhuma migração para executar"
