@@ -110,5 +110,12 @@ async function getSecrets(secretsManagerClient) {
   }
 }
 
-module.exports = getConfig;
+module.exports = async () => {
+  const config = await getConfig();
+  return {
+    development: config,
+    test: config,
+    production: config
+  };
+};
 
