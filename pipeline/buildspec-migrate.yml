@@ -19,4 +19,6 @@ phases:
       - echo "NODE_ENV=$NODE_ENV"
       - echo "Executando criação e migração de banco de dados"
       - npx sequelize-cli db:create --debug || echo "Database already exists"
-      - npx sequelize-cli db:migrate --debug
+      - echo "Verificando se existem migrações"
+      - ls -la migrations/ || echo "Diretório migrations não existe ou está vazio"
+      - if [ -d "migrations" ] && [ "$(ls -A migrations)" ]; then npx sequelize-cli db:migrate --debug; else echo "Nenhuma migração encontrada, pulando..."; fi
