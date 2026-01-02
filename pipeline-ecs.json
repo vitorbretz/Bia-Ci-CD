@@ -1,0 +1,146 @@
+{
+  "pipeline": {
+    "name": "bia-hom",
+    "roleArn": "arn:aws:iam::397234361193:role/service-role/AWSCodePipelineServiceRole-us-east-1-bia-hom",
+    "artifactStore": {
+      "type": "S3",
+      "location": "bia-artifacts"
+    },
+    "stages": [
+      {
+        "name": "Source",
+        "actions": [
+          {
+            "name": "Source",
+            "actionTypeId": {
+              "category": "Source",
+              "owner": "AWS",
+              "provider": "CodeStarSourceConnection",
+              "version": "1"
+            },
+            "configuration": {
+              "ConnectionArn": "arn:aws:codeconnections:us-east-1:397234361193:connection/740753dc-af02-4eab-9c13-d251e81f37d6",
+              "FullRepositoryId": "vitorbretz/Bia-Ci-CD",
+              "BranchName": "pr-ci/cd",
+              "OutputArtifactFormat": "CODE_ZIP",
+              "DetectChanges": "false"
+            },
+            "outputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "region": "us-east-1",
+            "runOrder": 1
+          }
+        ]
+      },
+      {
+        "name": "Build",
+        "actions": [
+          {
+            "name": "Test",
+            "actionTypeId": {
+              "category": "Build",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "configuration": {
+              "ProjectName": "bia-test"
+            },
+            "inputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "TestArtifact"
+              }
+            ],
+            "region": "us-east-1",
+            "runOrder": 1
+          },
+          {
+            "name": "BuildDocker",
+            "actionTypeId": {
+              "category": "Build",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "configuration": {
+              "ProjectName": "bia-build"
+            },
+            "inputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildArtifact"
+              }
+            ],
+            "region": "us-east-1",
+            "runOrder": 2
+          },
+          {
+            "name": "Migrate",
+            "actionTypeId": {
+              "category": "Build",
+              "owner": "AWS",
+              "provider": "CodeBuild",
+              "version": "1"
+            },
+            "configuration": {
+              "ProjectName": "bia-migrate"
+            },
+            "inputArtifacts": [
+              {
+                "name": "SourceArtifact"
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "MigrateArtifact"
+              }
+            ],
+            "region": "us-east-1",
+            "runOrder": 3
+          }
+        ]
+      },
+      {
+        "name": "Deploy-ECS",
+        "actions": [
+          {
+            "name": "DeployToECS",
+            "actionTypeId": {
+              "category": "Deploy",
+              "owner": "AWS",
+              "provider": "ECS",
+              "version": "1"
+            },
+            "configuration": {
+              "ClusterName": "bia-cluster",
+              "ServiceName": "bia-service",
+              "FileName": "imagedefinitions.json"
+            },
+            "inputArtifacts": [
+              {
+                "name": "BuildArtifact"
+              }
+            ],
+            "region": "us-east-1",
+            "runOrder": 1
+          }
+        ]
+      }
+    ],
+    "version": 8,
+    "executionMode": "SUPERSEDED",
+    "pipelineType": "V2"
+  }
+}

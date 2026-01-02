@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash
+      - sudo yum install -y nodejs
+      - node --version
+      - npm --version
+
+  build:
+    commands:
+      - npm install
+      - echo "Verificando Jest"
+      - ls -la node_modules/.bin/jest || echo "Symlink não existe"
+      - ls -la node_modules/jest/bin/jest.js || echo "Arquivo Jest não existe"
+      - echo "Recriando symlink do Jest"
+      - rm -f node_modules/.bin/jest
+      - ln -sf ../jest/bin/jest.js node_modules/.bin/jest
+      - chmod +x node_modules/.bin/jest
+      - cd client
+      - npm install --legacy-peer-deps --loglevel=error
+      - VITE_API_URL=http://localhost:3001/ npm run build --force
+      - cd ..
+      - node_modules/.bin/jest tests/unit --coverage --watchAll=false

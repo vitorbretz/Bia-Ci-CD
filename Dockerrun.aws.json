@@ -1,0 +1,44 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "397234361193.dkr.ecr.us-east-1.amazonaws.com/repository-ci/cd:abc123d",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 8080,
+      "HostPort": 80
+    }
+  ],
+  "Environment": [
+    {
+      "Name": "NODE_ENV",
+      "Value": "production"
+    },
+    {
+      "Name": "PORT",
+      "Value": "8080"
+    },
+    {
+      "Name": "DB_HOST",
+      "Value": "localhost"
+    },
+    {
+      "Name": "DB_USER",
+      "Value": "test_user"
+    },
+    {
+      "Name": "DB_PWD",
+      "Value": "test_password"
+    },
+    {
+      "Name": "DB_PORT",
+      "Value": "3306"
+    },
+    {
+      "Name": "DB_NAME",
+      "Value": "bia_test"
+    }
+  ],
+  "Logging": "/var/log/nginx"
+}

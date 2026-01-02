@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - curl -fsSL https://rpm.nodesource.com/setup_21.x | sudo bash
+      - sudo yum install -y nodejs
+      - node --version
+      - npm --version
+
+  pre_build:
+    commands:
+      - echo "Configurando variáveis de ambiente para banco..."
+      - export DB_HOST=db-secrets.cgrawk6w02jf.us-east-1.rds.amazonaws.com
+      - export DB_PORT=5432
+      - echo "Instalando dependências..."
+      - npm install
+
+  build:
+    commands:
+      - echo "Executando criação do banco..."
+      - npx sequelize-cli db:create || echo "Banco já existe ou erro na criação"
+      - echo "Executando migrações..."
+      - npx sequelize-cli db:migrate
+      - echo "Migrações concluídas!"
+
+artifacts:
+  files:
+    - "**/*"
