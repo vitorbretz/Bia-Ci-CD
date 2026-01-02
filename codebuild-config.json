@@ -1,6 +1,6 @@
 {
-    "name": "bia-homo",
-    "serviceRole": "arn:aws:iam::397234361193:role/service-role/bia-homo",
+    "name": "bia-migrate",
+    "serviceRole": "arn:aws:iam::397234361193:role/service-role/bia-migrate",
     "environment": {
         "type": "LINUX_CONTAINER",
         "image": "aws/codebuild/amazonlinux-x86_64-standard:5.0",
@@ -25,14 +25,29 @@
                 "name": "DB_PORT",
                 "value": "5432",
                 "type": "PLAINTEXT"
+            },
+            {
+                "name": "DB_NAME",
+                "value": "bia_production",
+                "type": "PLAINTEXT"
+            },
+            {
+                "name": "NODE_ENV",
+                "value": "production",
+                "type": "PLAINTEXT"
             }
         ],
-        "privilegedMode": true,
+        "privilegedMode": false,
         "imagePullCredentialsType": "CODEBUILD"
     },
     "source": {
         "type": "CODEPIPELINE",
-        "buildspec": "pipeline/buildspec.yml",
+        "buildspec": "pipeline/buildspec-migrate.yml",
         "insecureSsl": false
-    }
+    },
+    "artifacts": {
+        "type": "CODEPIPELINE"
+    },
+    "timeoutInMinutes": 20,
+    "queuedTimeoutInMinutes": 480
 }
